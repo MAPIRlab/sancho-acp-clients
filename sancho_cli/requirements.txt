@@ -1,0 +1,4 @@
+agent-client-protocol>=0.10.0
+rich>=13.0
+pytest
+pytest-asyncio

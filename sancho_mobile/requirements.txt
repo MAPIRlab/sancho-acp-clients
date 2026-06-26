@@ -1,0 +1,4 @@
+flet==0.85.3
+agent-client-protocol==0.10.1
+pytest
+pytest-asyncio
