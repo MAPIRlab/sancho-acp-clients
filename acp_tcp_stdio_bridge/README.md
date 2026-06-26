@@ -1,23 +1,23 @@
 # ACP TCP Stdio Bridge
 
-Este directorio contiene un **puente stdio-a-TCP** (`stdio-to-TCP bridge`) para el servidor Sancho ACP. Dado que muchos clientes y editores (como `acp-ui` u otras herramientas de integración) solo soportan la comunicación con agentes ACP a través de la entrada/salida estándar (stdio), esta herramienta se comunica localmente por pipes stdin/stdout y redirige de forma bidireccional los datos hacia el socket de red TCP donde corre el servidor principal `sancho_acp` en el robot.
+This directory contains a **stdio-to-TCP bridge** for the Sancho ACP server. Since many clients and editors (such as `acp-ui` or other integration tools) only support communication with ACP agents via standard input/output (stdio), this tool communicates locally using stdin/stdout pipes and bidirectionally redirects data to the TCP network socket where the main `sancho_acp` server runs on the robot.
 
-## Estructura del Repositorio
+## Repository Structure
 
-- `acp_tcp_stdio_adapter.py`: Script de Python nativo (sin dependencias externas) que redirige bidireccionalmente los flujos de `stdin` y del Socket TCP.
-- `run_acp_tcp_stdio_adapter.sh`: Script bash de lanzamiento optimizado para resolver rutas relativas de ejecución y aislar el entorno de Python de posibles colisiones.
-- `test_adapter.py`: Suite de pruebas unitarias automatizadas que comprueba el correcto funcionamiento del puente localmente.
-- `.env`: Archivo de configuración opcional para valores por defecto (host y puerto).
+- `acp_tcp_stdio_adapter.py`: A native Python script (no external dependencies) that bidirectionally redirects streams between `stdin`/`stdout` and the TCP Socket.
+- `run_acp_tcp_stdio_adapter.sh`: An optimized launcher bash script to resolve relative paths and isolate the Python environment from potential library path collisions.
+- `test_adapter.py`: An automated unit testing suite to verify the bridge's local operation.
+- `.env`: Optional configuration file for default values (host and port).
 
-## Configuración en el Cliente (acp-ui)
+## Client Configuration (acp-ui)
 
-Para añadir el agente en el cliente **acp-ui** (PC local), debes editar o crear el archivo de configuración en `~/.config/acp-ui/agents.json` e incluir la definición del agente:
+To add the agent to the **acp-ui** client on your local machine, edit or create the configuration file at `~/.config/acp-ui/agents.json` and include the agent definition:
 
 ```json
 {
   "agents": {
     "Sancho ACP Agent": {
-      "command": "/ruta/a/tu/repositorio/sancho_acp_clients/acp_tcp_stdio_bridge/run_acp_tcp_stdio_adapter.sh",
+      "command": "/path/to/your/repository/sancho-acp-clients/acp_tcp_stdio_bridge/run_acp_tcp_stdio_adapter.sh",
       "args": [
         "--host", "sancho.isa.uma.es",
         "--port", "9100",
@@ -30,40 +30,40 @@ Para añadir el agente en el cliente **acp-ui** (PC local), debes editar o crear
 }
 ```
 
-## Pruebas de Funcionamiento
+## Running & Testing
 
-### Pruebas Unitarias Locales
-Puedes ejecutar la suite de pruebas unitarias locales con:
+### Local Unit Tests
+You can run the suite of local unit tests using:
 ```bash
 python3 test_adapter.py
 ```
 
-### Ejecución Manual desde Consola
-Para probar que el adaptador logra conectar directamente contra el robot remoto:
+### Manual Execution from Terminal
+To manually verify that the adapter successfully connects to the remote robot:
 ```bash
 ./run_acp_tcp_stdio_adapter.sh --host sancho.isa.uma.es --port 9100 --connect-retries 5 --retry-delay 0.5 --verbose < /dev/null
 ```
 
 ---
 
-## Solución de Problemas (Troubleshooting)
+## Troubleshooting
 
-### 1. Error de Python en AppImage (`Fatal Python error: init_fs_encoding`)
-- **Problema:** Al lanzar el agente desde `acp-ui` se cerraba inmediatamente arrojando el error `ModuleNotFoundError: No module named 'encodings'`.
-- **Causa:** El AppImage de `acp-ui` inyecta variables de entorno `PYTHONHOME` y `PYTHONPATH` que apuntan a su montaje interno temporal. Cuando el script intentaba llamar al `python3` del sistema, este heredaba esas rutas erróneas y fallaba al cargar sus módulos base.
-- **Solución:** El script `run_acp_tcp_stdio_adapter.sh` ya limpia estas variables haciendo `unset PYTHONHOME` y `unset PYTHONPATH` antes de lanzar Python, aislando la ejecución y permitiendo al intérprete funcionar correctamente con la librería estándar de tu sistema operativo.
+### 1. Python Error in AppImage (`Fatal Python error: init_fs_encoding`)
+- **Problem**: When launching the agent from `acp-ui`, it closed immediately with the error `ModuleNotFoundError: No module named 'encodings'`.
+- **Cause**: The `acp-ui` AppImage injects environment variables like `PYTHONHOME` and `PYTHONPATH` pointing to its temporary mount. When the adapter script attempted to invoke the system's `python3`, it inherited these incorrect paths and failed to load base modules.
+- **Solution**: The `run_acp_tcp_stdio_adapter.sh` script clears these variables (`unset PYTHONHOME` and `unset PYTHONPATH`) before invoking Python, isolating the execution and letting the interpreter work with your system's standard library.
 
-### 2. Error en el Cliente (`Agent not found: <UUID>`)
-- **Problema:** `acp-ui` muestra el error de que no encuentra el agente por su identificador UUID.
-- **Causa:** La base de datos local y la caché de Tauri/localstorage en `acp-ui` se corrompen debido a intentos de conexión fallidos anteriores, manteniendo mapeados de UUID obsoletos en lugar de leer el archivo físico.
-- **Solución:**
-  1. Cierra completamente `acp-ui`.
-  2. Limpia la carpeta de configuración y el local storage de Tauri ejecutando:
+### 2. Client Error (`Agent not found: <UUID>`)
+- **Problem**: `acp-ui` displays an error saying that it cannot find the agent by its UUID identifier.
+- **Cause**: The local database and Tauri/localstorage cache in `acp-ui` can get corrupted due to previous connection attempts, keeping obsolete UUID mappings instead of reloading the physical config file.
+- **Solution**:
+  1. Close `acp-ui` completely.
+  2. Clear the configuration folder and Tauri local storage:
      ```bash
      rm -rf ~/.config/acp-ui/ ~/.local/share/formulahendry.acp-ui/
      ```
-  3. Crea de nuevo el directorio de configuración:
+  3. Recreate the configuration directory:
      ```bash
      mkdir -p ~/.config/acp-ui/
      ```
-  4. Vuelve a guardar el archivo `agents.json` con la configuración deseada y abre de nuevo `acp-ui`.
+  4. Save the `agents.json` file again with the desired configuration and restart `acp-ui`.

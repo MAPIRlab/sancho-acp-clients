@@ -1,29 +1,29 @@
 # Sancho ACP Clients
 
-Este repositorio contiene un conjunto de clientes diseñados para interactuar con el agente cognitivo del robot móvil **Sancho** a través del protocolo **ACP (Agent Client Protocol)**.
+This repository contains a set of heterogeneous clients designed to interact with the cognitive agent of the mobile robot **Sancho** through the **ACP (Agent Client Protocol)**.
 
-## Clientes Disponibles
+## Available Clients
 
-El repositorio está organizado en tres componentes principales:
+The repository is organized into three main components:
 
-### 1. [sancho_cli](sancho_cli/) (Cliente de Consola)
-Un cliente en línea de comandos (CLI) interactivo basado en terminal.
-* **Características**: Conexión TCP directa, soporte para entrada multilínea (usando `\`), visualización en tiempo real de los pensamientos (`💭`), planes y herramientas del agente, así como gestión interactiva de solicitudes de permisos.
+### 1. [sancho_cli](sancho_cli/) (Console Client)
+An interactive terminal-based command-line interface (CLI) client.
+* **Features**: Direct TCP connection, support for multiline input (using `\`), real-time display of the agent's thoughts (`💭`), plans, and tools, as well as interactive management of permission requests.
 
-### 2. [sancho_mobile](sancho_mobile/) (Cliente Móvil)
-Una aplicación que simula la interfaz de un smartphone, desarrollada con **Flet** (Material Design 3 para Python).
-* **Características**: Interfaz de chat moderna, visualización en flujo de pensamientos, tarjetas dinámicas para el estado de ejecución de herramientas y diálogos interactivos para autorizar o denegar acciones protegidas.
+### 2. [sancho_mobile](sancho_mobile/) (Mobile Client)
+A mobile phone simulation GUI client, developed using **Flet** (Material Design 3 framework for Python).
+* **Features**: Modern chat interface, streaming thought display, dynamic cards showing the status of tool executions, and interactive popups to authorize or deny protected agent actions.
 
-### 3. [acp_tcp_stdio_bridge](acp_tcp_stdio_bridge/) (Puente TCP-Stdio)
-Un puente adaptador bidireccional entre la entrada/salida estándar (stdio) y sockets TCP de red.
-* **Propósito**: Permite utilizar clientes ACP de código abierto que solo soportan comunicación por stdio (como **acp-ui**) a través de la red, redirigiendo de manera bidireccional los flujos de datos hacia el puerto TCP donde corre el servidor de Sancho.
+### 3. [acp_tcp_stdio_bridge](acp_tcp_stdio_bridge/) (TCP-Stdio Bridge)
+A bidirectional adapter/bridge between standard input/output (stdio) and TCP network sockets.
+* **Purpose**: Allows the use of open-source ACP clients that only support stdio-based communication (such as **acp-ui**) over the network by bidirectionally redirecting data streams to the TCP port where the Sancho server is running.
 
 ---
 
-## Requisitos Previos
+## Prerequisites
 
-Asegúrate de tener instalado Python 3 y un entorno virtual configurado en cada carpeta según se describe en sus respectivos READMEs.
+Ensure you have Python 3 installed and a virtual environment configured in each folder as described in their respective README files.
 
-Para probar la conexión general con el robot:
-* Host por defecto: `sancho.isa.uma.es`
-* Puerto por defecto: `9100`
+To test the general connection with the robot:
+* Default Host: `sancho.isa.uma.es`
+* Default Port: `9100`
