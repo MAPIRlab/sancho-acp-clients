@@ -1,15 +1,27 @@
-# ACP TCP Stdio Bridge
+# Sancho ACP TCP-Stdio Bridge
 
 This directory contains a **stdio-to-TCP bridge** for the Sancho ACP server. Since many clients and editors (such as `acp-ui` or other integration tools) only support communication with ACP agents via standard input/output (stdio), this tool communicates locally using stdin/stdout pipes and bidirectionally redirects data to the TCP network socket where the main `sancho_acp` server runs on the robot.
 
-## Repository Structure
+## Features
 
-- `acp_tcp_stdio_adapter.py`: A native Python script (no external dependencies) that bidirectionally redirects streams between `stdin`/`stdout` and the TCP Socket.
-- `run_acp_tcp_stdio_adapter.sh`: An optimized launcher bash script to resolve relative paths and isolate the Python environment from potential library path collisions.
-- `test_adapter.py`: An automated unit testing suite to verify the bridge's local operation.
-- `.env`: Optional configuration file for default values (host and port).
+- 🔌 **Stdio-to-TCP Mapping** — bidirectionally redirects data streams between standard E/S (stdin/stdout) and TCP sockets
+- 📦 **Zero External Dependencies** — native Python implementation using only the standard library
+- 🛡️ **AppImage Compatibility** — launcher script environment isolation to avoid library path collisions
+- ⚡ **Auto-Retry Mechanism** — configurable connection retries and delay parameters
 
-## Client Configuration (acp-ui)
+## Installation
+
+No external python dependencies are required. The bridge runs out-of-the-box using the Python 3 standard library.
+
+To set up the directory:
+```bash
+cd sancho-acp-clients/acp_tcp_stdio_bridge
+chmod +x run_acp_tcp_stdio_adapter.sh
+```
+
+## Usage
+
+### Client Configuration (acp-ui)
 
 To add the agent to the **acp-ui** client on your local machine, edit or create the configuration file at `~/.config/acp-ui/agents.json` and include the agent definition:
 
@@ -30,18 +42,18 @@ To add the agent to the **acp-ui** client on your local machine, edit or create 
 }
 ```
 
-## Running & Testing
-
-### Local Unit Tests
-You can run the suite of local unit tests using:
-```bash
-python3 test_adapter.py
-```
-
 ### Manual Execution from Terminal
+
 To manually verify that the adapter successfully connects to the remote robot:
 ```bash
 ./run_acp_tcp_stdio_adapter.sh --host sancho.isa.uma.es --port 9100 --connect-retries 5 --retry-delay 0.5 --verbose < /dev/null
+```
+
+## Running Tests
+
+To run the automated unit testing suite:
+```bash
+python3 test_adapter.py
 ```
 
 ---

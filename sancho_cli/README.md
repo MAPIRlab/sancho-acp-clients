@@ -15,7 +15,7 @@ A terminal-based **ACP (Agent Client Protocol)** client for interacting with the
 ## Installation
 
 ```bash
-cd sancho_acp_clients/sancho_cli
+cd sancho-acp-clients/sancho_cli
 
 # Create and activate a virtual environment
 python3 -m venv .venv
